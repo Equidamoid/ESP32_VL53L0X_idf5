@@ -1,8 +1,10 @@
 #include "vl53l0x_platform.h"
 
+#include "hal/i2c_hal.h"
 #include "driver/i2c.h"
 #include "esp_err.h"
 #include "esp_log.h"
+#include "freertos/FreeRTOS.h"
 
 #define ACK_CHECK_EN true
 
@@ -51,7 +53,7 @@ VL53L0X_Error VL53L0X_WriteMulti(VL53L0X_DEV Dev, uint8_t index, uint8_t *pdata,
     }
 
     i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(Dev->i2c_port_num, cmd, 1000 / portTICK_RATE_MS);
+    esp_err_t ret = i2c_master_cmd_begin(Dev->i2c_port_num, cmd, 1000 / portTICK_PERIOD_MS);
     i2c_cmd_link_delete(cmd);
 
     return esp_to_vl53l0x_error(ret);
@@ -89,7 +91,7 @@ VL53L0X_Error VL53L0X_ReadMulti(VL53L0X_DEV Dev, uint8_t index, uint8_t *pdata, 
     ESP_ERROR_CHECK(i2c_master_read(cmd, pdata, count, I2C_MASTER_LAST_NACK));
 
     ESP_ERROR_CHECK(i2c_master_stop(cmd));
-    esp_err_t ret = i2c_master_cmd_begin(Dev->i2c_port_num, cmd, 1000 / portTICK_RATE_MS);
+    esp_err_t ret = i2c_master_cmd_begin(Dev->i2c_port_num, cmd, 1000 / portTICK_PERIOD_MS);
     i2c_cmd_link_delete(cmd);
 
     return esp_to_vl53l0x_error(ret);
@@ -241,6 +243,6 @@ VL53L0X_Error VL53L0X_UpdateByte(VL53L0X_DEV Dev, uint8_t index, uint8_t AndData
  */
 VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev)
 {
-    vTaskDelay(1 / portTICK_RATE_MS);
+    vTaskDelay(1 / portTICK_PERIOD_MS);
     return VL53L0X_ERROR_NONE;
 }

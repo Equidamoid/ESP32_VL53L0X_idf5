@@ -196,8 +196,8 @@ public:
     return true;
   }
 
-  void i2cMasterInit(gpio_num_t pin_sda = GPIO_NUM_21,
-                     gpio_num_t pin_scl = GPIO_NUM_22, uint32_t freq = 400000) {
+  void i2cMasterInit(gpio_num_t pin_sda = GPIO_NUM_MAX,
+                     gpio_num_t pin_scl = GPIO_NUM_MAX, uint32_t freq = 400000) {
     i2c_config_t conf;
     memset(&conf, 0, sizeof(i2c_config_t));
     conf.mode = I2C_MODE_MASTER;
@@ -257,7 +257,7 @@ protected:
     // SPADs calibration (~10ms)
     status = VL53L0X_PerformRefSpadManagement(pDevice, &refSpadCount,
                                               &isApertureSpads);
-    ESP_LOGI(TAG, "refSpadCount = %d, isApertureSpads = %d\n", refSpadCount,
+    ESP_LOGI(TAG, "refSpadCount = %d, isApertureSpads = %d", refSpadCount,
              isApertureSpads);
     if (status != VL53L0X_ERROR_NONE)
       return print_pal_error(status, "VL53L0X_PerformRefSpadManagement");
